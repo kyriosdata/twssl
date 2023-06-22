@@ -1,4 +1,4 @@
-# twssl - TCC 2 UFG SI
+# Two way ssl with JWT - TCC 2 UFG SI
 
 ## Version 1
 - Client side SSL
