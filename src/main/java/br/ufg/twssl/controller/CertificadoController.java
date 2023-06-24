@@ -9,10 +9,19 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api")
 public class CertificadoController {
 
-    @GetMapping ("/certificado")
-    @PreAuthorize("hasAuthority('ROLE_USER')")
+    @PutMapping ("/certificado")
     public ResponseEntity importaCertificado(){
-        return new ResponseEntity("Tudo ok",HttpStatus.CREATED);
+        return new ResponseEntity("Tudo ok certificado",HttpStatus.CREATED);
     }
 
+    @GetMapping ("/token")
+    public ResponseEntity getToken(){
+        return new ResponseEntity("Tudo ok token",HttpStatus.OK);
+    }
+
+    @GetMapping("/autenticado")
+    @PreAuthorize("hasAuthority('ROLE_USER')")
+    public ResponseEntity verificaAuth(){
+        return new ResponseEntity("Tudo ok autenticado", HttpStatus.OK);
+    }
 }
