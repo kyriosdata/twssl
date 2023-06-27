@@ -16,7 +16,9 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfig {
     @Bean
     public SecurityFilterChain defaltFilterChain(HttpSecurity http) throws Exception {
-        http.authorizeHttpRequests()
+        http
+                .cors().and().csrf().disable()
+                .authorizeHttpRequests()
                 .antMatchers("/api/token").permitAll()
                 .antMatchers("/api/certificado").permitAll()
                 .anyRequest().authenticated()
