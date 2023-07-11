@@ -1,10 +1,7 @@
 package br.ufg.twssl.controller;
 
-import br.ufg.twssl.service.CertificadoService;
-import br.ufg.twssl.util.TrustStoreUtil;
+import br.ufg.twssl.service.CertificateUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.web.ServerProperties;
-import org.springframework.boot.web.server.Ssl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -12,7 +9,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
-import java.security.KeyStore;
 import java.security.cert.X509Certificate;
 
 @RestController
@@ -20,14 +16,14 @@ import java.security.cert.X509Certificate;
 public class CertificadoController {
 
     @Autowired
-    private CertificadoService certificadoService;
+    private CertificateUserDetailsService certificateUserDetailsService;
 
     @PostMapping()
     public ResponseEntity insereCertificado(HttpServletRequest request){
          {
             try {
                 X509Certificate[] clientCertificates = (X509Certificate[]) request.getAttribute("javax.servlet.request.X509Certificate");
-                this.certificadoService.addCertificateKeystore(clientCertificates);
+                this.certificateUserDetailsService.addCertificateKeystore(clientCertificates);
 
                 return ResponseEntity.ok("Certificate added successfully to the truststore.");
             } catch (Exception e) {
