@@ -8,3 +8,8 @@
 ## Version 2
 - Server side ssl replacing basic auth
 - new files in certificate folder
+  
+## Version 3
+- Full implementation of /certificate endpoint
+- Ssl context reload
+- Mock for certificate alias search (later should be replaced for database)  
