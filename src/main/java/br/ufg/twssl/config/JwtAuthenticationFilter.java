@@ -2,11 +2,13 @@ package br.ufg.twssl.config;
 
 import br.ufg.twssl.service.CertificateService;
 import br.ufg.twssl.service.JwtService;
+import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -22,12 +24,11 @@ import java.io.IOException;
 import java.util.Objects;
 
 @Configuration
+@AllArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-    @Autowired
-    private UserDetailsService certificateService;
-    @Autowired
-    private JwtService jwtService;
+    private final JwtService jwtService;
+    private final UserDetailsService userDetailsService;
     final static String AUTHCONST="Authorization";
     final static String BEARERCONST="Bearer ";
 
@@ -44,7 +45,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             final String jwt = request.getHeader(AUTHCONST).substring(BEARERCONST.length());
             username = this.jwtService.extractUsername(jwt);
             if(Objects.nonNull(username) && Objects.nonNull(SecurityContextHolder.getContext().getAuthentication())){
-                final UserDetails userDetails = certificateService.loadUserByUsername(username);
+                final UserDetails userDetails = userDetailsService.loadUserByUsername(username);
                 if (jwtService.isTokenValid(jwt,userDetails)){
                     final UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                             userDetails,
