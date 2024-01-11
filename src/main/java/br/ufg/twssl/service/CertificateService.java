@@ -96,12 +96,7 @@ public class CertificateService {
         truststore.load(fis, this.applicationSsl.getTrustStorePassword().toCharArray());
 
         // Check if the alias exists in the truststore
-        return truststore.containsAlias(this.buscaAliasByLogin(username));
-    }
-
-    //A lógica aqui é fazer uma busca ao banco para trazer esse alias, a partir de alguma chave
-    public String buscaAliasByLogin(final String username){
-        return "cn="+username+", o=internet widgits pty ltd, st=some-state, c=au";
+        return truststore.containsAlias(username);
     }
 
 }

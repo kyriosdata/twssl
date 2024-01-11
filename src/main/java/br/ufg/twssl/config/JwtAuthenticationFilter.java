@@ -39,7 +39,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                     @NonNull FilterChain filterChain
     ) throws ServletException, IOException {
         final String username;
-        if(Objects.nonNull(request.getHeader(AUTHCONST)) || !request.getHeader(AUTHCONST).startsWith(BEARERCONST)){
+        if(Objects.isNull(request.getHeader(AUTHCONST)) || !request.getHeader(AUTHCONST).startsWith(BEARERCONST)){
             filterChain.doFilter(request,response);
         }else{
             final String jwt = request.getHeader(AUTHCONST).substring(BEARERCONST.length());

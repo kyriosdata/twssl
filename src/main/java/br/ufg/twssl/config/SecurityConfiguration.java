@@ -42,7 +42,7 @@ public class SecurityConfiguration {
                     .authenticated()
                 .and()
                     .x509()
-                    .subjectPrincipalRegex("CN=(.*?)(?:,|$)")
+                    .subjectPrincipalRegex("(.*)")
                 .and()
                     .sessionManagement()
                     .sessionCreationPolicy(SessionCreationPolicy.STATELESS)

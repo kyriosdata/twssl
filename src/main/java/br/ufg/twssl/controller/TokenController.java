@@ -29,9 +29,9 @@ public class TokenController {
         return new ResponseEntity(this.jwtService.generateCertificateToken(clientCertificates), HttpStatus.OK);
     }
 
-    @GetMapping("/autenticado")
+    @GetMapping("/verify")
     @PreAuthorize("hasAuthority('ROLE_USER')")
     public ResponseEntity verificaAuth(){
-        return new ResponseEntity("Tudo ok autenticado", HttpStatus.OK);
+        return new ResponseEntity("Tudo ok, autenticado", HttpStatus.OK);
     }
 }
