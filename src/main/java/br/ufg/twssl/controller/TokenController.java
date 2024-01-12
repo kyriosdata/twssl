@@ -1,6 +1,5 @@
 package br.ufg.twssl.controller;
 
-import br.ufg.twssl.service.CertificateService;
 import br.ufg.twssl.service.JwtService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -16,7 +15,6 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
-import java.util.Objects;
 
 @RestController
 @RequestMapping("/api")

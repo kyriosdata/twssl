@@ -23,7 +23,7 @@ public class CertificadoController {
          {
             try {
                 X509Certificate[] clientCertificates = (X509Certificate[]) request.getAttribute("javax.servlet.request.X509Certificate");
-                this.certificateService.addCertificateKeystore(clientCertificates);
+                this.certificateService.addCertificateTruststore(clientCertificates);
 
                 return ResponseEntity.ok("Certificate added successfully to the truststore.");
             } catch (Exception e) {

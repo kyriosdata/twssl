@@ -3,16 +3,15 @@ package br.ufg.twssl.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.boot.web.server.Ssl;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509TrustManager;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.security.KeyManagementException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
@@ -30,13 +29,8 @@ public class CertificateService {
     public CertificateService(final ServerProperties serverProperties){
         this.applicationSsl=serverProperties.getSsl();
     }
-    public void addCertificateKeystore(final X509Certificate[] clientCertificates) throws KeyStoreException, IOException, CertificateException, NoSuchAlgorithmException, KeyManagementException {
-
-        // Load the default truststore (change the path if needed)
-        final KeyStore truststore = KeyStore.getInstance(KeyStore.getDefaultType());
-        final FileInputStream fis = new FileInputStream(this.applicationSsl.getTrustStore());
-        truststore.load(fis, this.applicationSsl.getTrustStorePassword().toCharArray());
-
+    public void addCertificateTruststore(final X509Certificate[] clientCertificates) throws KeyStoreException, IOException, CertificateException, NoSuchAlgorithmException, KeyManagementException {
+        final KeyStore truststore = this.loadTrustStore();
         // Create a new temporary truststore to hold the updated certificates
         final KeyStore updatedTruststore = KeyStore.getInstance(KeyStore.getDefaultType());
         updatedTruststore.load(null);
@@ -63,17 +57,16 @@ public class CertificateService {
         sslContext.init(null, new TrustManager[]{customTrustManager}, null);
         SSLContext.setDefault(sslContext);
 
-        // Save the updated truststore
-        try (FileOutputStream outputStream = new FileOutputStream(this.applicationSsl.getTrustStore())) {
-            updatedTruststore.store(outputStream, this.applicationSsl.getTrustStorePassword().toCharArray());
+        if(!this.isMemoryOnly()){
+            // Save the updated truststore
+            try (FileOutputStream outputStream = new FileOutputStream(this.applicationSsl.getTrustStore())) {
+                updatedTruststore.store(outputStream, this.applicationSsl.getTrustStorePassword().toCharArray());
+            }
         }
+
     }
     public String getCertificateAlias(final X509Certificate clientCertificate) throws KeyStoreException, IOException, CertificateException, NoSuchAlgorithmException {
-        String result=null;
-        // Load the truststore (change the path and type if needed)
-        final KeyStore truststore = KeyStore.getInstance(KeyStore.getDefaultType());
-        final FileInputStream fis = new FileInputStream(this.applicationSsl.getTrustStore());
-        truststore.load(fis, this.applicationSsl.getTrustStorePassword().toCharArray());
+        final KeyStore truststore = this.loadTrustStore();
 
         // Find the alias corresponding to the given certificate
         Enumeration<String> aliases = truststore.aliases();
@@ -81,22 +74,30 @@ public class CertificateService {
             String alias = aliases.nextElement();
             X509Certificate cert = (X509Certificate) truststore.getCertificate(alias);
             if (cert.equals(clientCertificate)) {
-                result=alias;
-            }else{
-                result=null;
+                return alias;
             }
         }
-        return result; // Certificate alias not found in the truststore
+        return null;
     }
 
     public boolean isCertificateInTrustStore(final String username) throws KeyStoreException, IOException, CertificateException, NoSuchAlgorithmException {
-        // Load the truststore
-        final KeyStore truststore = KeyStore.getInstance(KeyStore.getDefaultType());
-        final FileInputStream fis = new FileInputStream(this.applicationSsl.getTrustStore());
-        truststore.load(fis, this.applicationSsl.getTrustStorePassword().toCharArray());
-
-        // Check if the alias exists in the truststore
+        final KeyStore truststore = this.loadTrustStore();
         return truststore.containsAlias(username);
+    }
+    public KeyStore loadTrustStore() throws KeyStoreException, IOException, CertificateException, NoSuchAlgorithmException {
+        final KeyStore truststore = KeyStore.getInstance(KeyStore.getDefaultType());
+        if(this.isMemoryOnly()){
+            final Resource resource = new ClassPathResource("truststore.jks");
+            final InputStream fis = resource.getInputStream();
+            truststore.load(fis, this.applicationSsl.getTrustStorePassword().toCharArray());
+        }else{
+            final FileInputStream fis = new FileInputStream(this.applicationSsl.getTrustStore());
+            truststore.load(fis, this.applicationSsl.getTrustStorePassword().toCharArray());
+        }
+        return truststore;
+    }
+    public boolean isMemoryOnly(){
+        return applicationSsl.getTrustStore().startsWith("classpath:");
     }
 
 }
