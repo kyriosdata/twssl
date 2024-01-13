@@ -20,6 +20,9 @@ A requisição para este serviço é GET /api/token. O token só será recuperad
 - Replacement of enpoints '/autorizado' for '/verify'
 - Dinamic memory-only/filed truststore
 
+##Version 5
+- Asymmetric JWT secrect for generation and validation 
+
 # Estratégia para geração de certificado e importação em truststore
 
 Nesse projeto é utilizado autenticação por certificado X.509. Ou seja enquanto uma conexão segura é estabelecida, o cliente verifica o servidor de acordo com seu certificado (emitido por uma autoridade de certificação confiável).
