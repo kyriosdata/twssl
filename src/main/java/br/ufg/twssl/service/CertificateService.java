@@ -11,11 +11,11 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509TrustManager;
-import java.io.*;
-import java.security.KeyManagementException;
-import java.security.KeyStore;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.security.*;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.Enumeration;
@@ -26,9 +26,10 @@ public class CertificateService {
     private final Ssl applicationSsl;
 
     @Autowired
-    public CertificateService(final ServerProperties serverProperties){
-        this.applicationSsl=serverProperties.getSsl();
+    public CertificateService(final ServerProperties serverProperties) {
+        this.applicationSsl = serverProperties.getSsl();
     }
+
     public void addCertificateTruststore(final X509Certificate[] clientCertificates) throws KeyStoreException, IOException, CertificateException, NoSuchAlgorithmException, KeyManagementException {
         final KeyStore truststore = this.loadTrustStore();
         // Create a new temporary truststore to hold the updated certificates
@@ -36,7 +37,7 @@ public class CertificateService {
         updatedTruststore.load(null);
 
         // Load the existing certificates from the default truststore
-        final Enumeration<String>aliases = truststore.aliases();
+        final Enumeration<String> aliases = truststore.aliases();
         while (aliases.hasMoreElements()) {
             String alias = aliases.nextElement();
             updatedTruststore.setCertificateEntry(alias, truststore.getCertificate(alias));
@@ -57,7 +58,7 @@ public class CertificateService {
         sslContext.init(null, new TrustManager[]{customTrustManager}, null);
         SSLContext.setDefault(sslContext);
 
-        if(!this.isMemoryOnly()){
+        if (!this.isMemoryOnly()) {
             // Save the updated truststore
             try (FileOutputStream outputStream = new FileOutputStream(this.applicationSsl.getTrustStore())) {
                 updatedTruststore.store(outputStream, this.applicationSsl.getTrustStorePassword().toCharArray());
@@ -65,6 +66,7 @@ public class CertificateService {
         }
 
     }
+
     public String getCertificateAlias(final X509Certificate clientCertificate) throws KeyStoreException, IOException, CertificateException, NoSuchAlgorithmException {
         final KeyStore truststore = this.loadTrustStore();
 
@@ -84,19 +86,46 @@ public class CertificateService {
         final KeyStore truststore = this.loadTrustStore();
         return truststore.containsAlias(username);
     }
+
     public KeyStore loadTrustStore() throws KeyStoreException, IOException, CertificateException, NoSuchAlgorithmException {
         final KeyStore truststore = KeyStore.getInstance(KeyStore.getDefaultType());
-        if(this.isMemoryOnly()){
+        if (this.isMemoryOnly()) {
             final Resource resource = new ClassPathResource("truststore.jks");
             final InputStream fis = resource.getInputStream();
             truststore.load(fis, this.applicationSsl.getTrustStorePassword().toCharArray());
-        }else{
+        } else {
             final FileInputStream fis = new FileInputStream(this.applicationSsl.getTrustStore());
             truststore.load(fis, this.applicationSsl.getTrustStorePassword().toCharArray());
         }
         return truststore;
     }
-    public boolean isMemoryOnly(){
+
+    public KeyStore loadKeyStore() throws KeyStoreException, IOException, CertificateException, NoSuchAlgorithmException {
+        final KeyStore keystore = KeyStore.getInstance("PKCS12");
+        if (this.isMemoryOnly()) {
+            final Resource resource = new ClassPathResource("keystore.jks");
+            final InputStream fis = resource.getInputStream();
+            keystore.load(fis, this.applicationSsl.getKeyStorePassword().toCharArray());
+        } else {
+            final FileInputStream fis = new FileInputStream(this.applicationSsl.getKeyStore());
+            keystore.load(fis, this.applicationSsl.getKeyStorePassword().toCharArray());
+        }
+        return keystore;
+    }
+
+    public KeyPair generateKeyPair() throws Exception {
+        KeyStore keystore = this.loadKeyStore();
+
+        Key key = keystore.getKey("localhost", this.applicationSsl.getKeyPassword().toCharArray());
+        if (key instanceof PrivateKey) {
+            X509Certificate cert = (X509Certificate) keystore.getCertificate("localhost");
+            PublicKey publicKey = cert.getPublicKey();
+            return new KeyPair(publicKey, (PrivateKey) key);
+        }
+        throw new NoSuchAlgorithmException("No private key found in keystore");
+    }
+
+    public boolean isMemoryOnly() {
         return applicationSsl.getTrustStore().startsWith("classpath:");
     }
 

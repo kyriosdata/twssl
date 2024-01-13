@@ -21,6 +21,7 @@ import java.security.cert.X509Certificate;
 @RequiredArgsConstructor
 public class TokenController {
     private final JwtService jwtService;
+
     @GetMapping("/token")
     public ResponseEntity geraToken(HttpServletRequest request) throws CertificateException, KeyStoreException, IOException, NoSuchAlgorithmException {
         final X509Certificate[] clientCertificates = (X509Certificate[]) request.getAttribute("javax.servlet.request.X509Certificate");
@@ -29,7 +30,7 @@ public class TokenController {
 
     @GetMapping("/verify")
     @PreAuthorize("hasAuthority('ROLE_USER')")
-    public ResponseEntity verificaAuth(){
+    public ResponseEntity verificaAuth() {
         return new ResponseEntity("Tudo ok, autenticado", HttpStatus.OK);
     }
 }

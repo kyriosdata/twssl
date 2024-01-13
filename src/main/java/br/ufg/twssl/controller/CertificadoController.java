@@ -19,8 +19,8 @@ public class CertificadoController {
     private CertificateService certificateService;
 
     @PostMapping()
-    public ResponseEntity insereCertificado(HttpServletRequest request){
-         {
+    public ResponseEntity insereCertificado(HttpServletRequest request) {
+        {
             try {
                 X509Certificate[] clientCertificates = (X509Certificate[]) request.getAttribute("javax.servlet.request.X509Certificate");
                 this.certificateService.addCertificateTruststore(clientCertificates);
