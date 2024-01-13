@@ -20,7 +20,7 @@ A requisição para este serviço é GET /api/token. O token só será recuperad
 - Replacement of enpoints '/autorizado' for '/verify'
 - Dinamic memory-only/filed truststore
 
-##Version 5
+## Version 5
 - Asymmetric JWT secrect for generation and validation 
 
 # Estratégia para geração de certificado e importação em truststore
