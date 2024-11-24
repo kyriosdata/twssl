@@ -1,0 +1,23 @@
+# Version configuration template
+# Located at $FG_HOME/versions/{version}/config.yaml
+
+version: "0.0.1"  # Semantic version
+release_date: "2024-02-22"
+components:
+  api_server:
+    version: "2.1.0"
+    repository: "https://repo.example.com/api-server"
+    port: 8080
+    health_check:
+      path: "/health"
+      interval: "30s"
+
+  rules_engine:
+    version: "1.5.2"
+    repository: "https://repo.example.com/rules"
+    rules_dir: "/etc/fg/rules"
+
+  auth:
+    version: "3.0.1"
+    repository: "https://repo.example.com/auth"
+    port: 8090
