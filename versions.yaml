@@ -3,11 +3,3 @@ versions:
     release_date: "2024-01-15"
     details_file: "1.0.0.yaml"
 
-  - version: "1.1.0"
-    release_date: "2024-02-22"
-    details_file: "1.1.0.yaml"
-
-  - version: "2.1.1"
-    release_date: "2024-10-06"
-    details_file: "2.1.1.yaml"
-
