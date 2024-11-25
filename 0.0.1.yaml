@@ -4,13 +4,6 @@
 version: "0.0.1"  # Semantic version
 release_date: "2024-02-22"
 components:
-  jdk:
-    - version: "21.0.5_11"
-      repository: "https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21.0.5%2B11/OpenJDK21U-jdk_x64_linux_hotspot_21.0.5_11.tar.gz"
-      platform: "linux"
-    - version: "21.0.5_11"
-      repository: "https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21.0.5%2B11/OpenJDK21U-jdk_x64_windows_hotspot_21.0.5_11.zip"
-      platform: "win"
   api_server:
     version: "2.1.0"
     repository: "https://repo.example.com/api-server"
