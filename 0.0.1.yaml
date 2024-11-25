@@ -18,13 +18,3 @@ components:
   validator_cli:
     version: "6.4.4"
     repository: "https://github.com/hapifhir/org.hl7.fhir.core/releases/download/6.4.4/validator_cli.jar"
-
-  rules_engine:
-    version: "1.5.2"
-    repository: "https://repo.example.com/rules"
-    rules_dir: "/etc/fg/rules"
-
-  auth:
-    version: "3.0.1"
-    repository: "https://repo.example.com/auth"
-    port: 8090
