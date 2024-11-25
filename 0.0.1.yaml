@@ -10,6 +10,9 @@ jdk:
   - version: "21.0.5_11"
     repository: "https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21.0.5%2B11/OpenJDK21U-jdk_x64_windows_hotspot_21.0.5_11.zip"
     platform: "win"
+  - version: "21.0.5_11"
+    repository: "https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21.0.5%2B11/OpenJDK21U-jdk_x64_mac_hotspot_21.0.5_11.tar.gz"
+    platform: "mac"
     
 components:
   validator_cli:
