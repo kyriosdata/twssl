@@ -12,13 +12,9 @@ jdk:
     platform: "win"
     
 components:
-  api_server:
-    version: "2.1.0"
-    repository: "https://repo.example.com/api-server"
-    port: 8080
-    health_check:
-      path: "/health"
-      interval: "30s"
+  validator_cli:
+    version: "6.4.4"
+    repository: "https://github.com/hapifhir/org.hl7.fhir.core/releases/download/6.4.4/validator_cli.jar"
 
   rules_engine:
     version: "1.5.2"
